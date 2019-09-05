@@ -1,0 +1,53 @@
+Compiler Project 1 - Lexical Analyzer 
+COP4620 Construction of Language Translators 
+Lawrence Beutlich N01239768
+Dr. Roger Eggen 
+Due 9/5/19 
+Submitted 9/5/19
+
+The main driving function of the program is the nextToken method, 
+which returns a pointer to a structure representing the next token, 
+or to a special sentinel "endfile" token if EOF has been reached. This function 
+is called in a while loop to process the entire file. The nextToken 
+method is essentially a state machine, and it switches on an enum called STATES 
+to provide functionality. The function first switches on the state, and then 
+it switches on the current input to determine the next course of action (going to a
+new state, finishing processing the current token, etc.). To handle the issue of backtracking, 
+the nextToken method uses a flag called "advance" to determine if after processing the current 
+character of the stream, if it should advance its position or not. This allows 
+delimiters to not be skipped when certain tokens, say an identifier, are 
+recognized as being complete. Before processing any input, nextToken
+calls the utility function skipSpace to keep reading lines and advancing input 
+until the next non-whitespace character is found, or to return EOF if the 
+end of the file is reached. This ensures that before the logic of the state 
+machine occurs, the current input will not be whitespace. To represent the end of the line, 
+and since the input lines need to be printed, each line of input's newline character 
+is replaced with the null character, which is used in conditional statements to 
+determine if the end of the line is reached. This functionality is implemented 
+using the readNextLine function, which is called by skipSpace, and which fills 
+the buffer with the next line of input and sets the buffer position to 0. 
+When processing line comments, the input is skipped until the null character is found, then the skipSpace function is called 
+and the state machine is reset. Similar functionality is in place for multiline comments, 
+only using the * symbol to stop blindly advancing the input. 
+
+The flow of the program is more or less:
+
+nextToken 
+    |
+skipSpace
+    | 
+readline 
+
+nextToken calls skipspace to advance the buffer and the position in the buffer 
+to the next line and next non-whitespace character in the buffer respectively, 
+then the logic of the state machine runs which builds and returns the next token. 
+
+skipspace keeps advancing the position in the buffer until a non-whitespace character is found, 
+calling readLine when the end of the current buffer is found to refill the buffer with the 
+next line. If there are no more non-whitespace characters, EOF is returned. 
+
+readLine reads the next line of input from the file and fills the buffer with said line, 
+and resets the buffer position to 0, returning EOF if the end of the file is reached. The 
+newline chracter from the line is replaced with the null character, and this decision was made
+so that the line can be printed easily, and so that the null character can be used in 
+conditional statements to recognize the end of the line. 
